@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bagel</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1c1c1e; --sub: #5b5b60; --line: #e3e3e8; --mark: #fff3bf; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111113; --fg: #f2f2f7; --sub: #a1a1aa; --line: #2c2c30; --mark: #5c4a00; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+         line-height: 1.7; -webkit-text-size-adjust: 100%; }
+  main { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 40px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+  p, li { font-size: 1rem; }
+  .meta { color: var(--sub); font-size: 0.9rem; margin: 0 0 24px; }
+  ul { padding-left: 1.2em; margin: 8px 0; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.95rem; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; white-space: nowrap; }
+  a { color: inherit; }
+  mark { background: var(--mark); color: inherit; padding: 0 3px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Bagel</h1>
+  <p class="meta">반려견의 식사와 산책을 기록하는 앱</p>
+  <ul>
+    <li><a href="support/">지원과 문의</a></li>
+    <li><a href="privacy/">개인정보 처리방침</a></li>
+  </ul>
+</main>
+</body>
+</html>
