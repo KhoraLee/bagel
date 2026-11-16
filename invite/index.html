@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Bagel 초대</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1c1c1e; --sub: #5b5b60; --line: #e3e3e8; --mark: #fff3bf; --button: #1c1c1e; --button-fg: #ffffff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111113; --fg: #f2f2f7; --sub: #a1a1aa; --line: #2c2c30; --mark: #5c4a00; --button: #f2f2f7; --button-fg: #111113; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+         line-height: 1.7; -webkit-text-size-adjust: 100%; }
+  main { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 40px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+  p, li { font-size: 1rem; }
+  .meta { color: var(--sub); font-size: 0.9rem; margin: 0 0 24px; }
+  ul { padding-left: 1.2em; margin: 8px 0; }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+  .open { display: block; text-align: center; text-decoration: none; font-size: 1.05rem; font-weight: 600;
+          background: var(--button); color: var(--button-fg); border-radius: 14px; padding: 14px 16px; margin: 24px 0 8px; }
+  .code-box { display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+              border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 8px 0; }
+  .code { font-family: ui-monospace, Menlo, monospace; font-size: 1.15rem; letter-spacing: 0.06em;
+          -webkit-user-select: all; user-select: all; word-break: break-all; flex: 1 1 auto; }
+  .copy { font: inherit; font-size: 0.95rem; color: inherit; background: transparent;
+          border: 1px solid var(--line); border-radius: 10px; padding: 6px 14px; cursor: pointer; }
+  .copied { color: var(--sub); font-size: 0.9rem; margin: 0; }
+</style>
+</head>
+<body>
+<main>
+  <section id="invalid">
+    <h1>초대 링크가 올바르지 않아요</h1>
+    <p class="meta">링크가 잘렸거나 주소가 바뀐 것 같아요.</p>
+    <p>초대한 분에게 링크를 다시 받아 주세요. 초대 코드를 따로 받았다면 Bagel 앱에서 "공동 보호자로 참여"를 골라 코드를 입력할 수 있어요.</p>
+  </section>
+
+  <section id="valid" hidden>
+    <h1>Bagel 공동 보호자 초대</h1>
+    <p class="meta">반려견의 식사와 산책 기록을 함께 볼 수 있도록 초대를 받았어요.</p>
+    <a id="open" class="open" href="#">Bagel에서 열기</a>
+    <p class="meta">앱에서 초대를 확인한 뒤에 참여하게 돼요.</p>
+
+    <h2>초대 코드</h2>
+    <div class="code-box">
+      <span id="code" class="code"></span>
+      <button id="copy" class="copy" type="button">복사</button>
+    </div>
+    <p id="copied" class="copied" aria-live="polite"></p>
+
+    <h2>앱이 없나요?</h2>
+    <ul>
+      <li>App Store에서 Bagel을 설치한 뒤 이 링크를 다시 눌러 주세요.</li>
+      <li>또는 Bagel 앱에서 "공동 보호자로 참여"를 골라 위의 초대 코드를 입력해 주세요.</li>
+    </ul>
+    <p id="store" hidden><a id="store-link" href="#">App Store에서 Bagel 받기</a></p>
+  </section>
+</main>
+<script>
+  // App Store 주소가 정해지면 여기에만 넣음. 비어 있으면 링크를 보이지 않음
+  var APP_STORE_URL = "https://apps.apple.com/app/id6827869460";
+
+  // 앱(InviteCode)과 서버와 같은 규칙: ASCII 영숫자가 아닌 문자를 빼고 소문자로 바꾼 뒤 base32 16자인지 확인.
+  // 대소문자 무시(i) 플래그나 toLowerCase를 먼저 쓰면 ASCII가 아닌 문자가 ASCII로 바뀔 수 있어(켈빈 기호 등) 거른 뒤에 바꿈
+  function normalizeInviteCode(input) {
+    if (typeof input !== "string") return null;
+    var code = input.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
+    return /^[a-z2-7]{16}$/.test(code) ? code : null;
+  }
+
+  var code = normalizeInviteCode(new URLSearchParams(location.search).get("c"));
+  if (code) {
+    document.getElementById("invalid").hidden = true;
+    document.getElementById("valid").hidden = false;
+    document.getElementById("code").textContent = code;
+    document.getElementById("open").setAttribute("href", "bagel://invite?c=" + code);
+
+    var copied = document.getElementById("copied");
+    document.getElementById("copy").addEventListener("click", function () {
+      function fallback() {
+        var range = document.createRange();
+        range.selectNodeContents(document.getElementById("code"));
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        copied.textContent = "코드를 선택했어요. 길게 눌러 복사해 주세요.";
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(function () {
+          copied.textContent = "초대 코드를 복사했어요.";
+        }, fallback);
+      } else {
+        fallback();
+      }
+    });
+
+    if (APP_STORE_URL) {
+      document.getElementById("store-link").setAttribute("href", APP_STORE_URL);
+      document.getElementById("store").hidden = false;
+    }
+  }
+</script>
+</body>
+</html>
